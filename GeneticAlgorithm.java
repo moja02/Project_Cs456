@@ -108,44 +108,7 @@ private Chromosome copyChromosome(Chromosome original) {
     return copy;
 }
 
-
-    // طفرة (Mutation) على كروموسوم واحد
-    private void mutate(Chromosome chromosome, List<Room> rooms, List<TimePeriod> periods) {
-        List<Exam> exams = chromosome.getExams();
-
-        for (int i = 0; i < exams.size(); i++) {
-            if (random.nextDouble() < mutationRate) {
-                Exam exam = exams.get(i);
-
-                // نختار عشوائياً هل نغير القاعة أو الفترة أو الاثنين
-                int choice = random.nextInt(3); // 0 or 1 or 2
-
-                switch (choice) {
-                    case 0:
-                        // تغيير القاعة فقط
-                        Room newRoom = rooms.get(random.nextInt(rooms.size()));
-                        exam.setRoom(newRoom);
-                        break;
-                    case 1:
-                        // تغيير الفترة فقط
-                        TimePeriod newPeriod = periods.get(random.nextInt(periods.size()));
-                        exam.setTimePeriod(newPeriod);
-                        break;
-                    case 2:
-                        // تغيير الاثنين
-                        Room newRoom2 = rooms.get(random.nextInt(rooms.size()));
-                        TimePeriod newPeriod2 = periods.get(random.nextInt(periods.size()));
-                        exam.setRoom(newRoom2);
-                        exam.setTimePeriod(newPeriod2);
-                        break;
-                }
-            }
-        }
-
-        // بعد الطفرة نعيد حساب الفتنس
-        chromosome.calculateFitness();
-    }
-    private void mutate1(Chromosome chromosome,
+    private void mutate(Chromosome chromosome,
                     List<Room> rooms,
                     List<TimePeriod> periods) {
 
@@ -177,5 +140,51 @@ private Chromosome copyChromosome(Chromosome original) {
     }
 
     // تشغيل الخوارزمية
-    public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) { return null;}
+    // تشغيل الخوارزمية الجينية
+public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) {
+
+    // تهيئة المجتمع الأولي
+    List<Chromosome> population = initializePopulation(courses, rooms, periods);
+
+    // أفضل فرد مبدئياً
+    Chromosome globalBest = getBest(population);
+
+    //  حلقة الأجيال
+    for (int gen = 0; gen < generations; gen++) {
+
+        List<Chromosome> newPopulation = new ArrayList<>();
+
+        //  النخبة: الاحتفاظ بأفضل كروموسوم كما هو
+        Chromosome elite = copyChromosome(globalBest);
+        newPopulation.add(elite);
+
+        //  توليد بقية الأفراد في الجيل الجديد
+        while (newPopulation.size() < populationSize) {
+            Chromosome parent1 = selectParent(population);
+            Chromosome parent2 = selectParent(population);
+
+            Chromosome child = crossover(parent1, parent2);      
+            mutate(child, rooms, periods);                       // تغيير الجينات + حساب الفتنس
+
+            newPopulation.add(child);
+        }
+
+        // تحديث المجتمع
+        population = newPopulation;
+
+        // تحديث أفضل حل عالمي
+        Chromosome bestOfGen = getBest(population);
+        if (bestOfGen.getFitness() > globalBest.getFitness()) {
+            globalBest = copyChromosome(bestOfGen);
+        }
+
+        // طباعة تقدّم الخوارزمية
+        System.out.println("Generation " + gen +
+        " - Best fitness = " + globalBest.getFitness());
+    }
+
+    // إرجاع أفضل جدول امتحانات
+    return globalBest;
+}
+
 }

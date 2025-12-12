@@ -22,7 +22,7 @@ public class Chromosome {//كل كروموسوم يمثل جدول
 
     
     public double calculateFitness() {
-    int conflicts = 0;
+    double conflicts = 0;
 
     for (int i = 0; i < exames.size(); i++) {
         Exam e1 = exames.get(i);
