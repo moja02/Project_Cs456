@@ -19,7 +19,7 @@ public class FinalScheduleUI extends JFrame {// كلاس لطباعة الجدو
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // أسماء الأعمدة
-        String[] columnNames = {"Course id", "Course name", "year", "room name", "day","time start"};
+        String[] columnNames = {"Course id", "Course name", "year", "room name", "Day","Date day","time start"};
 
         // إنشاء النموذج
         model = new DefaultTableModel(columnNames, 0);
