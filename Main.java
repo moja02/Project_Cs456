@@ -1,4 +1,4 @@
-package project;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,29 +71,44 @@ public class Main {
         double crossoverRate = 0.8;
         int populationSize   = 80;
         int generations      = 50;
+        
 
         GeneticAlgorithm ga = new GeneticAlgorithm(
                 mutationRate,
                 crossoverRate,
                 populationSize,
-                generations
+                generations,
+                2
         );
 
         // 3) تشغيل الخوارزمية والحصول على أفضل جدول --------
         Chromosome best = ga.run(courses, rooms, periods);
 
-        // 4) طباعة النتيجة النهائية ------------------------
-        System.out.println("\n===== Final Best Solution =====");
-        System.out.println("Best fitness = " + best.getFitness());
+      
 
-        for (Exam e : best.getExams()) {
-            System.out.println(
-                    e.getCourse().getCId() + " - " +
-                    e.getCourse().getCName() + " | Year " + e.getCourse().getYear() +
-                    " -> Room " + e.getRoom().getRName() +
-                    " @ " + e.getTimePeriod().getTDay() +
-                    " " + e.getTimePeriod().getTStart()
-            );
-        }
+        // 4) طباعة أو عرض النتيجة النهائية ------------------------
+System.out.println("\n===== Final Best Solution =====");
+System.out.println("Best fitness = " + best.getFitness());
+
+// نحول النتائج لصفوف باش نعرضها في Swing
+List<String[]> tableData = new ArrayList<>();
+
+for (Exam e : best.getExams()) {
+
+    String[] row = {
+            e.getCourse().getCId(),
+            e.getCourse().getCName(),
+            String.valueOf(e.getCourse().getYear()),
+            e.getRoom().getRName(),
+            e.getTimePeriod().getTDay(),
+            e.getTimePeriod().getTStart()
+    };
+
+    tableData.add(row);
+}
+
+// نعرض الواجهة
+new FinalScheduleUI(tableData);
+
     }
 }
