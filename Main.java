@@ -1,43 +1,40 @@
-
-
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
 
-        // 1) تجهيز البيانات (مثال تجريبي) -----------------
         List<Courses> courses = new ArrayList<>();
         List<Room> rooms = new ArrayList<>();
         List<TimePeriod> periods = new ArrayList<>();
 
-        // قاعات
-        // ====== القاعات (6 قاعات) ======
+        // القاعات
         rooms.add(new Room("R1-IT"));
         rooms.add(new Room("R2-IT"));
-        // rooms.add(new Room("R3-IT"));
-        // rooms.add(new Room("R4-Main"));
-        // rooms.add(new Room("R5-Main"));
-        // rooms.add(new Room("R6-Lab"));
 
-        // ====== الفترات الزمنية (5 أيام × فترتين = 10 فترات) ======
-        // السبت
-        periods.add(new TimePeriod(0, "Saturday", "09:00"));
-        periods.add(new TimePeriod(1, "Saturday", "12:00"));
-        // الأحد
-        periods.add(new TimePeriod(2, "Sunday", "09:00"));
-        periods.add(new TimePeriod(3, "Sunday", "12:00"));
-        // الاثنين
-        periods.add(new TimePeriod(4, "Monday", "09:00"));
-        periods.add(new TimePeriod(5, "Monday", "12:00"));
-        // الثلاثاء
-        periods.add(new TimePeriod(6, "Tuesday", "09:00"));
-        periods.add(new TimePeriod(7, "Tuesday", "12:00"));
-        // الأربعاء
-        periods.add(new TimePeriod(8, "Wednesday", "09:00"));
-        periods.add(new TimePeriod(9, "Wednesday", "12:00"));
+        // نختار تاريخ بداية يكون السبت (مثال)
+        LocalDate startDate = LocalDate.of(2025, 1, 4); // هذا اليوم لازم يكون Saturday
+        int numberOfDays = 14;  // مثلاً أسبوعين
+        int tId = 0;
 
-        // ====== المقررات (مثال ~ 20 مقرر عبر 4 سنوات) ======
+        for (int i = 0; i < numberOfDays; i++) {
+            LocalDate current = startDate.plusDays(i);
+            DayOfWeek dow = current.getDayOfWeek();
+
+            // تخطي الجمعة فقط
+            if (dow == DayOfWeek.FRIDAY) {
+                continue;
+            }
+
+            // فترتين في اليوم: 09:00 و 12:00
+            periods.add(new TimePeriod(tId++, current, LocalTime.of(9, 0)));
+            periods.add(new TimePeriod(tId++, current, LocalTime.of(12, 0)));
+        }
+
+       // ====== المقررات (مثال ~ 20 مقرر عبر 4 سنوات) ======
         // سنة أولى
         courses.add(new Courses("C101", "Math 1",          1));
         courses.add(new Courses("C102", "Physics 1",       1));
@@ -66,49 +63,40 @@ public class Main {
         courses.add(new Courses("C404", "Information Security", 4));
         courses.add(new Courses("C405", "Graduation Project",   4));
 
-        // 2) إنشاء كائن الخوارزمية الجينية -----------------
         double mutationRate  = 0.05;
         double crossoverRate = 0.8;
         int populationSize   = 80;
         int generations      = 50;
-        
 
         GeneticAlgorithm ga = new GeneticAlgorithm(
                 mutationRate,
                 crossoverRate,
                 populationSize,
                 generations,
-                2
+                2   // seed
         );
 
-        // 3) تشغيل الخوارزمية والحصول على أفضل جدول --------
         Chromosome best = ga.run(courses, rooms, periods);
 
-      
+        System.out.println("\n===== Final Best Solution =====");
+        System.out.println("Best fitness = " + best.getFitness());
 
-        // 4) طباعة أو عرض النتيجة النهائية ------------------------
-System.out.println("\n===== Final Best Solution =====");
-System.out.println("Best fitness = " + best.getFitness());
+        List<String[]> tableData = new ArrayList<>();
 
-// نحول النتائج لصفوف باش نعرضها في Swing
-List<String[]> tableData = new ArrayList<>();
+        for (Exam e : best.getExams()) {
+            String[] row = {
+                    e.getCourse().getCId(),
+                    e.getCourse().getCName(),
+                    String.valueOf(e.getCourse().getYear()),
+                    e.getRoom().getRName(),
+                    e.getTimePeriod().getTDay().getDayOfWeek().toString(),
+                    e.getTimePeriod().getTDay().toString(),   // التاريخ الفعلي
+                    e.getTimePeriod().getTStart().toString(),             // الوقت
+                             
+                };
+            tableData.add(row);
+        }
 
-for (Exam e : best.getExams()) {
-
-    String[] row = {
-            e.getCourse().getCId(),
-            e.getCourse().getCName(),
-            String.valueOf(e.getCourse().getYear()),
-            e.getRoom().getRName(),
-            e.getTimePeriod().getTDay(),
-            e.getTimePeriod().getTStart()
-    };
-
-    tableData.add(row);
-}
-
-// نعرض الواجهة
-new FinalScheduleUI(tableData);
-
+        new FinalScheduleUI(tableData);
     }
 }
