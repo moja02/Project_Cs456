@@ -2,6 +2,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Main {
@@ -73,7 +74,7 @@ public class Main {
                 crossoverRate,
                 populationSize,
                 generations,
-                2   // seed
+                2 // seed
         );
 
         Chromosome best = ga.run(courses, rooms, periods);
@@ -83,20 +84,32 @@ public class Main {
 
         List<String[]> tableData = new ArrayList<>();
 
-        for (Exam e : best.getExams()) {
+      List<Exam> sortedExams = new ArrayList<>(best.getExams());
+
+        sortedExams.sort(
+                Comparator.comparing((Exam e) -> e.getTimePeriod().getTDay())   // أولاً: التاريخ
+                        .thenComparing(e -> e.getTimePeriod().getTStart())   // ثانياً: الوقت
+        );
+
+        // الآن نعبي الجدول بالترتيب الزمني
+        for (Exam e : sortedExams) {
+
+
             String[] row = {
-                    e.getCourse().getCId(),
+                   e.getCourse().getCId(),
                     e.getCourse().getCName(),
                     String.valueOf(e.getCourse().getYear()),
                     e.getRoom().getRName(),
                     e.getTimePeriod().getTDay().getDayOfWeek().toString(),
                     e.getTimePeriod().getTDay().toString(),   // التاريخ الفعلي
                     e.getTimePeriod().getTStart().toString(),             // الوقت
-                             
-                };
+            };
+
             tableData.add(row);
         }
 
+        // نعرض الواجهة
         new FinalScheduleUI(tableData);
     }
 }
+    
