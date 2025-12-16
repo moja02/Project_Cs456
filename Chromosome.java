@@ -50,6 +50,13 @@ public double calculateFitness() {
             }
             
         }
+        // أوزان العقوبة: نخلي الصارم أثقل من الناعم
+        double alpha = 10.0;  // وزن التعارضات الصارمة H
+        double beta  = 1.0;   // وزن القيد الناعم S
+        double cost = alpha * hardConflicts + beta * softSameDay;
+        
+        // الفتنس: كل ما قلت الـ cost زادت الفتنس والجدول صار أحسن
+        return 1.0 / (1.0 + cost);
     }
 
     public double getFitness(){  
@@ -66,4 +73,3 @@ public double calculateFitness() {
     }
 
 }
-
