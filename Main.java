@@ -81,10 +81,21 @@ public class Main {
                 2 // seed
         );
 
+        // قبل استدعاء الخوارزمية
+        long startTime = System.nanoTime();
+
         Chromosome best = ga.run(courses, rooms, periods);
+
+        // بعد انتهاء الخوارزمية
+        long endTime = System.nanoTime();
+
+        // حساب الزمن بالميلي ثانية
+        double executionTimeMs = (endTime - startTime) / 1_000_000.0;
 
         System.out.println("\n===== Final Best Solution =====");
         System.out.println("Best fitness = " + best.getFitness());
+        System.out.println("Execution time = " + executionTimeMs + " ms");
+
 
         List<String[]> tableData = new ArrayList<>();
 
