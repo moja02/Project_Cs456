@@ -1,4 +1,3 @@
-package project;
 
 public class Exam {
     private Courses course;//مادة الامتحان

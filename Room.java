@@ -1,13 +1,17 @@
-package project;
-
 public class Room {
-    private String rName;
-
-    public Room (String rName){
+    private String rName;//اسم القاعة
+    
+    //constractor
+    public Room(String rName) {
         this.rName = rName;
+        
     }
 
-    public String getRName(){ return rName;}
+    //get method
 
-    public void setRname(String name){ rName = name;}
+    public String getRName(){return rName;}//دالة ارجاع لاسم القاعة
+
+    //SET method
+
+    public void setCName(String name){rName=name;}//دالة تعديل لاسم القاعة
 }

@@ -1,4 +1,3 @@
-package project;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -94,7 +93,7 @@ public class GeneticAlgorithm {
     }
 
     Chromosome child = new Chromosome(childExams);
-    child.calculateFitness();   // لأن الفتنس عندك double
+   //child.calculateFitness();   // لأن الفتنس عندك double
     return child;
 }
  //دالة مساعدة copyChromosome
@@ -104,29 +103,64 @@ private Chromosome copyChromosome(Chromosome original) {
         newExams.add(new Exam(e));   // deep copy لكل Exam
     }
     Chromosome copy = new Chromosome(newExams);
-    copy.calculateFitness();
+   //copy.calculateFitness();
     return copy;
 }
 
-    private void mutate(Chromosome chromosome,
-                    List<Room> rooms,
-                    List<TimePeriod> periods) {
 
-    List<Exam> exams = chromosome.getExams();
+    // طفرة (Mutation) على كروموسوم واحد
+    private void mutate(Chromosome chromosome, List<Room> rooms, List<TimePeriod> periods) {
+        List<Exam> exams = chromosome.getExams();
 
-    for (Exam exam : exams) {
-        if (random.nextDouble() < mutationRate) {
-            // نختار قاعة جديدة وفترة جديدة عشوائياً
-            Room newRoom = rooms.get(random.nextInt(rooms.size()));
-            TimePeriod newPeriod = periods.get(random.nextInt(periods.size()));
+        for (int i = 0; i < exams.size(); i++) {
+            if (random.nextDouble() < mutationRate) {
+                Exam exam = exams.get(i);
 
-            exam.setRoom(newRoom);
-            exam.setTimePeriod(newPeriod);
+                // نختار عشوائياً هل نغير القاعة أو الفترة أو الاثنين
+                int choice = random.nextInt(3); // 0 or 1 or 2
+
+                switch (choice) {
+                    case 0:
+                        // تغيير القاعة فقط
+                        Room newRoom = rooms.get(random.nextInt(rooms.size()));
+                        exam.setRoom(newRoom);
+                        break;
+                    case 1:
+                        // تغيير الفترة فقط
+                        TimePeriod newPeriod = periods.get(random.nextInt(periods.size()));
+                        exam.setTimePeriod(newPeriod);
+                        break;
+                    case 2:
+                        // تغيير الاثنين
+                        Room newRoom2 = rooms.get(random.nextInt(rooms.size()));
+                        TimePeriod newPeriod2 = periods.get(random.nextInt(periods.size()));
+                        exam.setRoom(newRoom2);
+                        exam.setTimePeriod(newPeriod2);
+                        break;
+                }
+            }
         }
-    }
 
-    chromosome.calculateFitness();
-}
+        // بعد الطفرة نعيد حساب الفتنس
+       chromosome.setFitness(chromosome.calculateFitness());
+    }
+//     private void mutate(Chromosome chromosome, List<Room> rooms, List<TimePeriod> periods)  { //ديما بيختار قاعة و فترة عشوائية
+
+//     List<Exam> exams = chromosome.getExams();
+
+//     for (Exam exam : exams) {
+//         if (random.nextDouble() < mutationRate) {
+//             // نختار قاعة جديدة وفترة جديدة عشوائياً
+//             Room newRoom = rooms.get(random.nextInt(rooms.size()));
+//             TimePeriod newPeriod = periods.get(random.nextInt(periods.size()));
+
+//             exam.setRoom(newRoom);
+//             exam.setTimePeriod(newPeriod);
+//         }
+//     }
+
+//    chromosome.setFitness(chromosome.calculateFitness()); 
+//}
 
     // الحصول على أفضل كروموسوم في الجيل
     private Chromosome getBest(List<Chromosome> population) { 
@@ -139,9 +173,7 @@ private Chromosome copyChromosome(Chromosome original) {
     return best; // نرجع أفضل فرد
     }
 
-    // تشغيل الخوارزمية
-    // تشغيل الخوارزمية الجينية
-public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) {
+ public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) {
 
     // تهيئة المجتمع الأولي
     List<Chromosome> population = initializePopulation(courses, rooms, periods);
