@@ -107,7 +107,6 @@ private Chromosome copyChromosome(Chromosome original) {
     return copy;
 }
 
-
     // طفرة (Mutation) على كروموسوم واحد
     private void mutate(Chromosome chromosome, List<Room> rooms, List<TimePeriod> periods) {
         List<Exam> exams = chromosome.getExams();
@@ -140,9 +139,8 @@ private Chromosome copyChromosome(Chromosome original) {
                 }
             }
         }
-
         // بعد الطفرة نعيد حساب الفتنس
-       chromosome.setFitness(chromosome.calculateFitness());
+        chromosome.setFitness(chromosome.calculateFitness());
     }
 //     private void mutate(Chromosome chromosome, List<Room> rooms, List<TimePeriod> periods)  { //ديما بيختار قاعة و فترة عشوائية
 
@@ -173,7 +171,7 @@ private Chromosome copyChromosome(Chromosome original) {
     return best; // نرجع أفضل فرد
     }
 
- public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) {
+public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) {
 
     // تهيئة المجتمع الأولي
     List<Chromosome> population = initializePopulation(courses, rooms, periods);

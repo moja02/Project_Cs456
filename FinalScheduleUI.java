@@ -21,6 +21,7 @@ public class FinalScheduleUI extends JFrame {// كلاس لطباعة الجدو
         // أسماء الأعمدة
         String[] columnNames = {"رمز المقرر", "اسم المقرر", "سنة الدراسية", "اسم القاعة", "اليوم","التاريخ","الوقت البداية"};
 
+
         // إنشاء النموذج
         model = new DefaultTableModel(columnNames, 0);
         table = new JTable(model);
