@@ -103,9 +103,10 @@ private Chromosome copyChromosome(Chromosome original) {
         newExams.add(new Exam(e));   // deep copy لكل Exam
     }
     Chromosome copy = new Chromosome(newExams);
-   //copy.calculateFitness();
+    copy.setFitness(copy.calculateFitness());
     return copy;
 }
+
 
     // طفرة (Mutation) على كروموسوم واحد
     private void mutate(Chromosome chromosome, List<Room> rooms, List<TimePeriod> periods) {
@@ -139,8 +140,9 @@ private Chromosome copyChromosome(Chromosome original) {
                 }
             }
         }
+
         // بعد الطفرة نعيد حساب الفتنس
-        chromosome.setFitness(chromosome.calculateFitness());
+    chromosome.setFitness(chromosome.calculateFitness());
     }
 //     private void mutate(Chromosome chromosome, List<Room> rooms, List<TimePeriod> periods)  { //ديما بيختار قاعة و فترة عشوائية
 
@@ -170,8 +172,16 @@ private Chromosome copyChromosome(Chromosome original) {
     }
     return best; // نرجع أفضل فرد
     }
+    // حساب متوسط الفتنس للجيل (Average Fitness)
+    private double getAverageFitness(List<Chromosome> population) {
+        double sum = 0.0;
+        for (Chromosome c : population) {
+            sum += c.getFitness();
+        }
+        return sum / population.size();
+    }
 
-public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) {
+    public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> periods) {
 
     // تهيئة المجتمع الأولي
     List<Chromosome> population = initializePopulation(courses, rooms, periods);
@@ -184,9 +194,10 @@ public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> 
 
         List<Chromosome> newPopulation = new ArrayList<>();
 
-        //  النخبة: الاحتفاظ بأفضل كروموسوم كما هو
         Chromosome elite = copyChromosome(globalBest);
+        elite.setFitness(elite.calculateFitness());   // ✅ ضمان
         newPopulation.add(elite);
+
 
         //  توليد بقية الأفراد في الجيل الجديد
         while (newPopulation.size() < populationSize) {
@@ -204,13 +215,18 @@ public Chromosome run(List<Courses> courses, List<Room> rooms, List<TimePeriod> 
 
         // تحديث أفضل حل عالمي
         Chromosome bestOfGen = getBest(population);
+
+        double avgFitness = getAverageFitness(population);
+
         if (bestOfGen.getFitness() > globalBest.getFitness()) {
             globalBest = copyChromosome(bestOfGen);
         }
 
         // طباعة تقدّم الخوارزمية
         System.out.println("Generation " + gen +
-        " - Best fitness = " + globalBest.getFitness());
+        " - Best fitness = " + globalBest.getFitness() +
+        " - Avg fitness = " + avgFitness);
+
     }
 
     // إرجاع أفضل جدول امتحانات

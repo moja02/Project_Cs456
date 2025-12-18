@@ -1,8 +1,8 @@
+
 public class Room {
     private String rName;//اسم القاعة
-    
-    //constractor
-    public Room(String rName) {
+
+    public Room(String rName) {//فاليو كوني=ستراكت
         this.rName = rName;
         
     }
